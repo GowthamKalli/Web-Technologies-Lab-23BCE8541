@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Registration Form</title>
+</head>
+<body>
+
+    <h2 align="center">Registration Form</h2>
+
+    <form action="/submit-registration" method="POST" enctype="multipart/form-data">
+        
+        <table border="0" cellpadding="10" align="center">
+            <tbody>
+                <tr>
+                    <td><label for="full_name">Full Name:</label></td>
+                    <td><input type="text" id="full_name" name="full_name" required></td>
+                </tr>   
+
+                <tr>
+                    <td><label for="email">Email Address:</label></td>
+                    <td><input type="email" id="email" name="email" required></td>
+                </tr>
+
+                <tr>
+                    <td><label for="dob">Date of Birth:</label></td>
+                    <td><input type="date" id="dob" name="dob" required></td>
+                </tr>
+
+                <tr>
+                    <td><label for="phone">Phone Number:</label></td>
+                    <td><input type="tel" id="phone" name="phone" required></td>
+                </tr>
+
+                <tr>
+                    <td><label for="password">Password:</label></td>
+                    <td><input type="password" id="password" name="password" required></td>
+                </tr>
+
+                <tr>
+                    <td><label for="profile_pic">Profile Picture:</label></td>
+                    <td><input type="file" id="profile_pic" name="profile_pic"></td>
+                </tr>
+
+                <tr>
+                    <td colspan="2" align="center">
+                        <input type="checkbox" id="terms" name="terms" required>
+                        <label for="terms">I accept the Terms &amp; Conditions</label>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td colspan="2" align="center">
+                        <input type="submit" value="Register Now">
+                        <input type="reset" value="Clear Form">
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+    </form>
+
+</body>
+</html> 
