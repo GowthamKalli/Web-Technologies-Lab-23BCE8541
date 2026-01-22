@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Multi-Stage Form</title>
+</head>
+
+<body>
+
+<h2>Multi-Stage Form</h2>
+
+<progress id="progress" value="1" max="4"></progress>
+
+<form>
+
+<div id="stage1">
+    <p>Stage 1: Personal Info</p>
+    <input type="text" id="name" placeholder="Name"><br><br>
+    <button type="button" onclick="nextStage()">Next</button>
+</div>
+
+<div id="stage2" style="display:none;">
+    <p>Stage 2: Contact</p>
+    <input type="email" id="email" placeholder="Email"><br><br>
+    <button type="button" onclick="prevStage()">Back</button>
+    <button type="button" onclick="nextStage()">Next</button>
+</div>
+
+<div id="stage3" style="display:none;">
+    <p>Stage 3: Age</p>
+    <input type="number" id="age" placeholder="Age"><br><br>
+    <button type="button" onclick="prevStage()">Back</button>
+    <button type="button" onclick="nextStage()">Next</button>
+</div>
+
+<div id="stage4" style="display:none;">
+    <p>Stage 4: Confirmation</p>
+    <textarea id="remarks" placeholder="Remarks"></textarea><br><br>
+    <button type="button" onclick="prevStage()">Back</button>
+    <button type="button" onclick="submitForm()">Submit</button>
+</div>
+
+</form>
+<script src="script.js"></script>
+
+</body>
+</html>

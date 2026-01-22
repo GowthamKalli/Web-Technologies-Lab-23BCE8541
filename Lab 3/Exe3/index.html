@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Dynamic Survey Builder</title>
+</head>
+
+<body>
+
+<h2>Survey Preference Form</h2>
+
+<p>Choose question types to include:</p>
+
+<input type="checkbox" id="textQ" checked> Text Question<br>
+<input type="checkbox" id="radioQ" checked> Radio Question<br>
+<input type="checkbox" id="checkQ" checked> Checkbox Question<br>
+<input type="checkbox" id="selectQ" checked> Dropdown Question<br>
+<input type="checkbox" id="textareaQ" checked> Textarea Question<br>
+<input type="checkbox" id="numberQ" checked> Number Question<br><br>
+
+<button onclick="generateSurvey()">Generate Survey</button>
+
+<hr>
+
+<h2>Generated Survey</h2>
+
+<form id="surveyForm"></form>
+
+<button onclick="submitSurvey()">Submit Survey</button>
+<script src="script.js"></script>
+
+</body>
+</html>

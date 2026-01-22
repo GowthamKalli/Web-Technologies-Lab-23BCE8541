@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Intelligent Shopping Cart</title>
+</head>
+<body>
+
+    <h1>Shopping Cart</h1>
+
+    <div id="product-list">
+        <h3>Available Products</h3>
+        <button onclick="addItem('Laptop', 100000, 'Electronics')">Add Laptop (Rs. 1,00,000 - Electronics)</button>
+        <button onclick="addItem('Phone', 50000, 'Electronics')">Add Phone (Rs. 50,000 - Electronics)</button>
+        <button onclick="addItem('Shirt', 2000, 'Clothing')">Add Shirt (Rs. 2,000 - Clothing)</button>
+    </div>
+
+    <hr>
+
+    <div id="cart-display">
+        <h3>Your Cart</h3>
+        <ul id="cart-items"></ul>
+        
+        <p>
+            Coupon Code: <input type="text" id="coupon-input" placeholder="e.g. SAVE10">
+            <button onclick="applyCoupon()">Apply</button>
+        </p>
+
+        <div id="calculation-log" style="background-color: #f0f0f0; padding: 10px; border: 1px solid #ccc;">
+            <strong>Discount Breakdown:</strong>
+            <ul id="log-list"></ul>
+        </div>
+
+        <h4>Total Price: Rs. <span id="total-price">0</span></h4>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
