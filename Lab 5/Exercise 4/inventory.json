@@ -1,0 +1,30 @@
+[
+    {
+        "id": "P001",
+        "name": "Daawat Basmati Rice",
+        "category": "Grocery",
+        "price": 450,
+        "stock": 15
+    },
+    {
+        "id": "P002",
+        "name": "Tata Tea Gold",
+        "category": "Beverage",
+        "price": 280,
+        "stock": 4
+    },
+    {
+        "id": "P003",
+        "name": "Amul Butter 500g",
+        "category": "Dairy",
+        "price": 255,
+        "stock": 20
+    },
+    {
+        "id": "P004",
+        "name": "Parle-G Biscuit",
+        "category": "Snacks",
+        "price": 80,
+        "stock": 3
+    }
+]

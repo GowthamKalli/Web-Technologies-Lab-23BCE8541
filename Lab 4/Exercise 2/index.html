@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Apan Bazaar: Product Search</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f4f4f9; display: flex; justify-content: center; padding-top: 50px; }
+        .search-container { width: 450px; background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #2c3e50; }
+        input[type="text"] { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 5px; box-sizing: border-box; font-size: 16px; outline: none; }
+        input:focus { border-color: #3498db; }
+        #resultsList { margin-top: 20px; list-style: none; padding: 0; }
+        .product-item { padding: 15px; border-bottom: 1px solid #eee; transition: 0.2s; }
+        .product-item:hover { background-color: #f9f9f9; }
+        .product-name { font-weight: bold; color: #333; display: block; }
+        .product-meta { font-size: 0.9em; color: #666; }
+        .no-results { text-align: center; color: #e74c3c; margin-top: 20px; font-weight: bold; }
+        .error { color: white; background: #e74c3c; padding: 10px; border-radius: 5px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="search-container">
+    <h2>Apan Bazaar Search</h2>
+    <input type="text" id="searchInput" placeholder="Search products (e.g. Tea)...">
+    
+    <div id="statusArea"></div>
+    <ul id="resultsList"></ul>
+</div>
+
+<script>
+    const searchInput = document.getElementById('searchInput');
+    const resultsList = document.getElementById('resultsList');
+    const statusArea = document.getElementById('statusArea');
+    let debounceTimer;
+
+    searchInput.addEventListener('input', function() {
+        clearTimeout(debounceTimer);
+        const query = this.value.trim().toLowerCase();
+        
+        if (query === "") {
+            resultsList.innerHTML = "";
+            statusArea.innerHTML = "";
+            return;
+        }
+
+        debounceTimer = setTimeout(() => {
+            performSearch(query);
+        }, 500);
+    });
+
+    async function performSearch(query) {
+        try {
+            const response = await fetch('products.json');
+            
+            if (!response.ok) {
+                throw new Error("Failed to fetch product database (Status: " + response.status + ")");
+            }
+
+            const products = await response.json();
+            const filtered = products.filter(p => 
+                p.name.toLowerCase().includes(query) || 
+                p.category.toLowerCase().includes(query)
+            );
+
+            displayResults(filtered);
+        } catch (error) {
+            statusArea.innerHTML = `<div class="error">${error.message}</div>`;
+            resultsList.innerHTML = "";
+        }
+    }
+
+    function displayResults(results) {
+        statusArea.innerHTML = "";
+        resultsList.innerHTML = "";
+
+        if (results.length === 0) {
+            resultsList.innerHTML = `<li class="no-results">No results found</li>`;
+            return;
+        }
+
+        results.forEach(product => {
+            const li = document.createElement('li');
+            li.className = 'product-item';
+            li.innerHTML = `
+                <span class="product-name">${product.name}</span>
+                <span class="product-meta">Category: ${product.category} | Price: ₹${product.price}</span>
+            `;
+            resultsList.appendChild(li);
+        });
+    }
+</script>
+
+</body>
+</html>

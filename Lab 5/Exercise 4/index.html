@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Saman: Product Inventory System</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f8f9fa; padding: 20px; }
+        .wrapper { max-width: 1100px; margin: auto; background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        h2 { color: #333; margin-bottom: 20px; }
+        .grid-form { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 20px; }
+        input, select { padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        button { padding: 8px 15px; border: none; border-radius: 4px; cursor: pointer; color: white; }
+        .btn-primary { background-color: #0d6efd; }
+        .btn-danger { background-color: #dc3545; }
+        .btn-success { background-color: #198754; }
+        .search-box { margin-bottom: 20px; width: 100%; display: flex; gap: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background-color: #212529; color: white; }
+        .low-stock { background-color: #fff3cd; color: #856404; font-weight: bold; }
+        .total-box { margin-top: 20px; padding: 15px; background: #e9ecef; border-radius: 5px; text-align: right; font-size: 1.2em; font-weight: bold; }
+        #msg { color: #d9534f; margin-bottom: 10px; min-height: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <h2>Saman: Product Inventory Management</h2>
+    <div id="msg"></div>
+
+    <div class="grid-form">
+        <input type="text" id="pid" placeholder="Product ID">
+        <input type="text" id="pname" placeholder="Name">
+        <input type="text" id="pcat" placeholder="Category">
+        <input type="number" id="pprice" placeholder="Price">
+        <input type="number" id="pstock" placeholder="Stock">
+        <button class="btn-primary" onclick="addProduct()" style="grid-column: span 5;">Add Product to Inventory</button>
+    </div>
+
+    <div class="search-box">
+        <input type="text" id="searchCat" placeholder="Search by Category (e.g. Dairy)" style="flex-grow: 1;">
+        <button class="btn-success" onclick="searchProducts()">Search</button>
+        <button class="btn-primary" onclick="resetSearch()">Show All</button>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Product Name</th>
+                <th>Category</th>
+                <th>Price (₹)</th>
+                <th>Stock</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="inventoryBody"></tbody>
+    </table>
+
+    <div class="total-box" id="totalDisplay">
+        Total Inventory Value: ₹0
+    </div>
+</div>
+
+<script>
+    let products = [];
+
+    async function fetchInventory() {
+        try {
+            const res = await fetch('inventory.json');
+            if (!res.ok) throw new Error("Could not load file");
+            products = await res.json();
+            renderTable(products);
+        } catch (e) {
+            document.getElementById('msg').innerText = "Error: " + e.message;
+        }
+    }
+
+    function renderTable(data) {
+        const tbody = document.getElementById("inventoryBody");
+        tbody.innerHTML = "";
+        let totalValue = 0;
+
+        data.forEach((item, index) => {
+            const itemValue = item.price * item.stock;
+            totalValue += itemValue;
+
+            const row = document.createElement("tr");
+            if (item.stock < 5) row.className = "low-stock";
+
+            row.innerHTML = `
+                <td>${item.id}</td>
+                <td>${item.name}</td>
+                <td>${item.category}</td>
+                <td><input type="number" value="${item.price}" onchange="updateItem(${index}, 'price', this.value)"></td>
+                <td><input type="number" value="${item.stock}" onchange="updateItem(${index}, 'stock', this.value)"></td>
+                <td>
+                    <button class="btn-danger" onclick="deleteProduct(${index})">Delete</button>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+
+        document.getElementById("totalDisplay").innerText = "Total Inventory Value: ₹" + totalValue.toLocaleString('en-IN');
+    }
+
+    function addProduct() {
+        const id = document.getElementById("pid").value.trim();
+        const name = document.getElementById("pname").value.trim();
+        const cat = document.getElementById("pcat").value.trim();
+        const price = parseFloat(document.getElementById("pprice").value);
+        const stock = parseInt(document.getElementById("pstock").value);
+
+        if (!id || !name || !cat || isNaN(price) || isNaN(stock)) {
+            document.getElementById("msg").innerText = "Invalid data: All fields are required.";
+            return;
+        }
+
+        if (products.some(p => p.id === id)) {
+            document.getElementById("msg").innerText = "Duplicate ID error.";
+            return;
+        }
+
+        products.push({ id, name, category: cat, price, stock });
+        document.getElementById("msg").innerText = "";
+        clearForm();
+        renderTable(products);
+    }
+
+    function updateItem(index, field, value) {
+        const numValue = parseFloat(value);
+        if (isNaN(numValue) || numValue < 0) {
+            document.getElementById("msg").innerText = "Invalid numerical input.";
+            return;
+        }
+        products[index][field] = numValue;
+        document.getElementById("msg").innerText = "";
+        renderTable(products);
+    }
+
+    function deleteProduct(index) {
+        products.splice(index, 1);
+        renderTable(products);
+    }
+
+    function searchProducts() {
+        const query = document.getElementById("searchCat").value.toLowerCase();
+        const filtered = products.filter(p => p.category.toLowerCase().includes(query));
+        renderTable(filtered);
+    }
+
+    function resetSearch() {
+        document.getElementById("searchCat").value = "";
+        renderTable(products);
+    }
+
+    function clearForm() {
+        document.getElementById("pid").value = "";
+        document.getElementById("pname").value = "";
+        document.getElementById("pcat").value = "";
+        document.getElementById("pprice").value = "";
+        document.getElementById("pstock").value = "";
+    }
+
+    window.onload = fetchInventory;
+</script>
+
+</body>
+</html>

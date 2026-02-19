@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Username Checker</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f5f7fa; display: flex; justify-content: center; padding-top: 50px; }
+        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 350px; }
+        h3 { margin-top: 0; color: #333; }
+        .form-group { margin-bottom: 20px; position: relative; }
+        input { width: 100%; padding: 12px; box-sizing: border-box; border: 2px solid #ddd; border-radius: 6px; outline: none; transition: 0.3s; }
+        input:focus { border-color: #3498db; }
+        #status { font-size: 0.85em; margin-top: 5px; display: block; font-weight: 600; }
+        .available { color: #27ae60; }
+        .taken { color: #e74c3c; }
+        .loading { color: #f39c12; }
+        button { width: 100%; padding: 12px; background: #3498db; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        button:disabled { background: #bdc3c7; cursor: not-allowed; }
+        #loader { display: none; width: 15px; height: 15px; border: 2px solid #f3f3f3; border-top: 2px solid #3498db; border-radius: 50%; animate: spin 1s linear infinite; position: absolute; right: 10px; top: 15px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h3>Nirikshan: Registration</h3>
+    <form id="regForm">
+        <div class="form-group">
+            <input type="text" id="username" placeholder="Choose Username" autocomplete="off">
+            <div id="loader"></div>
+            <span id="status"></span>
+        </div>
+        <button type="submit" id="submitBtn" disabled>Register Now</button>
+    </form>
+</div>
+
+<script>
+    const usernameInput = document.getElementById('username');
+    const statusText = document.getElementById('status');
+    const loader = document.getElementById('loader');
+    const submitBtn = document.getElementById('submitBtn');
+    let isAvailable = false;
+
+    usernameInput.addEventListener('input', async (e) => {
+        const value = e.target.value.trim().toLowerCase();
+        
+        if (value.length < 3) {
+            statusText.innerText = "";
+            submitBtn.disabled = true;
+            return;
+        }
+
+        loader.style.display = 'block';
+        statusText.innerText = "Checking availability...";
+        statusText.className = "loading";
+        submitBtn.disabled = true;
+
+        try {
+            const response = await fetch('usernames.json');
+            const takenNames = await response.json();
+            
+            setTimeout(() => {
+                loader.style.display = 'none';
+                if (takenNames.includes(value)) {
+                    statusText.innerText = "✖ Username already taken";
+                    statusText.className = "taken";
+                    isAvailable = false;
+                } else {
+                    statusText.innerText = "✔ Username available";
+                    statusText.className = "available";
+                    isAvailable = true;
+                }
+                submitBtn.disabled = !isAvailable;
+            }, 500);
+
+        } catch (error) {
+            loader.style.display = 'none';
+            statusText.innerText = "Error checking database";
+            statusText.className = "taken";
+        }
+    });
+
+    document.getElementById('regForm').addEventListener('submit', (e) => {
+        if (!isAvailable) {
+            e.preventDefault();
+            alert("Please choose a valid username first.");
+        } else {
+            e.preventDefault();
+            alert("Dhanyawad! Registration successful for " + usernameInput.value);
+        }
+    });
+</script>
+
+</body>
+</html>

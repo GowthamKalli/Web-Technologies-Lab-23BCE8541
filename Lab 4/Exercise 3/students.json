@@ -1,0 +1,14 @@
+[
+    {
+        "id": "STU101",
+        "name": "Arjun Malhotra",
+        "dept": "Computer Science",
+        "marks": 85
+    },
+    {
+        "id": "STU102",
+        "name": "Sanya Iyer",
+        "dept": "Electronics",
+        "marks": 92
+    }
+]

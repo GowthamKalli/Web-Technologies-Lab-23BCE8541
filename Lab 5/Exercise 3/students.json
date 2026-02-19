@@ -1,0 +1,20 @@
+[
+    {
+        "id": "S101",
+        "name": "Aarav Patel",
+        "course": "Computer Science",
+        "marks": 88
+    },
+    {
+        "id": "S102",
+        "name": "Isha Sharma",
+        "course": "Electronics",
+        "marks": 92
+    },
+    {
+        "id": "S103",
+        "name": "Vivaan Iyer",
+        "course": "Mechanical",
+        "marks": 75
+    }
+]

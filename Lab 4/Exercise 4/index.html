@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mausam Dashboard</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #e0eafc; display: flex; justify-content: center; padding-top: 50px; }
+        .dashboard { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); width: 400px; text-align: center; }
+        h2 { color: #2c3e50; margin-bottom: 20px; }
+        .search-area { display: flex; gap: 10px; margin-bottom: 20px; }
+        input { flex: 1; padding: 12px; border: 2px solid #ddd; border-radius: 8px; outline: none; }
+        button { padding: 12px 20px; background: #3498db; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        #loader { display: none; margin: 20px auto; border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .weather-info { display: none; margin-top: 20px; padding: 20px; border-top: 1px solid #eee; }
+        .temp { font-size: 3em; font-weight: bold; color: #2c3e50; }
+        .detail { color: #7f8c8d; margin: 5px 0; font-size: 1.1em; }
+        .error { color: #e74c3c; margin-top: 10px; display: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="dashboard">
+    <h2>Mausam Dashboard</h2>
+    
+    <div class="search-area">
+        <input type="text" id="cityInput" placeholder="Enter city (e.g., Mumbai)">
+        <button onclick="getWeather()">Search</button>
+    </div>
+
+    <div id="loader"></div>
+    <div id="errorMsg" class="error"></div>
+
+    <div id="weatherDisplay" class="weather-info">
+        <div class="temp" id="dispTemp">--°C</div>
+        <div class="detail" id="dispCond" style="text-transform: capitalize; font-weight: bold;">--</div>
+        <div class="detail">Humidity: <span id="dispHumid">--</span>%</div>
+        <hr>
+        <div class="detail" id="cacheInfo" style="font-size: 0.8em; color: #95a5a6;"></div>
+    </div>
+</div>
+
+<script>
+    let lastSearchResult = null;
+    const API_KEY = "bd5e378503939ddaee76f12ad7a97608"; // OpenWeatherMap API Key
+
+    async function getWeather() {
+        const city = document.getElementById('cityInput').value.trim();
+        const display = document.getElementById('weatherDisplay');
+        const loader = document.getElementById('loader');
+        const errorMsg = document.getElementById('errorMsg');
+
+        if (!city) {
+            showError("Please enter a city name.");
+            return;
+        }
+
+        errorMsg.style.display = 'none';
+        display.style.display = 'none';
+        loader.style.display = 'block';
+
+        const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`;
+
+        try {
+            const response = await fetch(url);
+            
+            if (!response.ok) {
+                if (response.status === 404) throw new Error("City not found. Please check spelling.");
+                if (response.status === 401) throw new Error("Invalid API Key.");
+                throw new Error("Network error occurred.");
+            }
+
+            const data = await response.json();
+            
+            lastSearchResult = {
+                city: data.name,
+                temp: data.main.temp,
+                condition: data.weather[0].description,
+                humidity: data.main.humidity,
+                time: new Date().toLocaleTimeString()
+            };
+
+            updateUI();
+
+        } catch (err) {
+            showError(err.message);
+        } finally {
+            loader.style.display = 'none';
+        }
+    }
+
+    function updateUI() {
+        const display = document.getElementById('weatherDisplay');
+        document.getElementById('dispTemp').innerText = `${Math.round(lastSearchResult.temp)}°C`;
+        document.getElementById('dispCond').innerText = lastSearchResult.condition;
+        document.getElementById('dispHumid').innerText = lastSearchResult.humidity;
+        document.getElementById('cacheInfo').innerText = `Last search: ${lastSearchResult.city} at ${lastSearchResult.time}`;
+        
+        display.style.display = 'block';
+    }
+
+    function showError(msg) {
+        const errorMsg = document.getElementById('errorMsg');
+        errorMsg.innerText = "Error: " + msg;
+        errorMsg.style.display = 'block';
+        document.getElementById('loader').style.display = 'none';
+    }
+</script>
+
+</body>
+</html>

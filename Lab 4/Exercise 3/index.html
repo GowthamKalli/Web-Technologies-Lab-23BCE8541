@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Management System - AJAX CRUD</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f8f9fa; padding: 30px; }
+        .container { max-width: 900px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .form-group { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px; }
+        input, select { padding: 10px; border: 1px solid #ced4da; border-radius: 4px; }
+        .btn-group { grid-column: span 2; display: flex; gap: 10px; }
+        button { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; color: white; font-weight: bold; }
+        .btn-add { background-color: #28a745; }
+        .btn-update { background-color: #ffc107; color: #212529; }
+        .btn-delete { background-color: #dc3545; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; border: 1px solid #dee2e6; text-align: left; }
+        th { background-color: #007bff; color: white; }
+        #alertBox { padding: 15px; margin-bottom: 20px; border-radius: 4px; display: none; }
+        .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Chhatra Prabandhan: Student Management</h2>
+    
+    <div id="alertBox"></div>
+
+    <div class="form-group">
+        <input type="text" id="stuId" placeholder="Student ID (e.g., STU103)">
+        <input type="text" id="stuName" placeholder="Student Name">
+        <select id="stuDept">
+            <option value="">Select Department</option>
+            <option value="Computer Science">Computer Science</option>
+            <option value="Electronics">Electronics</option>
+            <option value="Mechanical">Mechanical</option>
+            <option value="Civil">Civil</option>
+        </select>
+        <input type="number" id="stuMarks" placeholder="Marks">
+        <div class="btn-group">
+            <button class="btn-add" onclick="createStudent()">Add Student</button>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Department</th>
+                <th>Marks</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="stuTableBody"></tbody>
+    </table>
+</div>
+
+<script>
+    let students = [];
+
+    async function fetchStudents() {
+        try {
+            const response = await fetch('students.json');
+            
+            if (response.status === 200) {
+                students = await response.json();
+                renderTable();
+            } else if (response.status === 404) {
+                handleMessage("Error 404: JSON file not found", "error");
+            } else if (response.status === 500) {
+                handleMessage("Error 500: Server error occurred", "error");
+            }
+        } catch (err) {
+            handleMessage("Failed to connect to the service", "error");
+        }
+    }
+
+    function renderTable() {
+        const tbody = document.getElementById('stuTableBody');
+        tbody.innerHTML = '';
+        
+        students.forEach((s, index) => {
+            const row = `<tr>
+                <td>${s.id}</td>
+                <td>${s.name}</td>
+                <td>${s.dept}</td>
+                <td>${s.marks}</td>
+                <td>
+                    <button class="btn-update" onclick="editStudent(${index})">Edit</button>
+                    <button class="btn-delete" onclick="deleteStudent(${index})">Delete</button>
+                </td>
+            </tr>`;
+            tbody.innerHTML += row;
+        });
+    }
+
+    function createStudent() {
+        const id = document.getElementById('stuId').value;
+        const name = document.getElementById('stuName').value;
+        const dept = document.getElementById('stuDept').value;
+        const marks = document.getElementById('stuMarks').value;
+
+        if (!id || !name || !dept || !marks) {
+            handleMessage("All fields are mandatory", "error");
+            return;
+        }
+
+        if (students.find(s => s.id === id)) {
+            handleMessage("Duplicate Student ID", "error");
+            return;
+        }
+
+        const newStudent = { id, name, dept, marks: parseInt(marks) };
+        students.push(newStudent);
+        renderTable();
+        handleMessage("Student added successfully!", "success");
+        clearForm();
+    }
+
+    function editStudent(index) {
+        const s = students[index];
+        const newMarks = prompt(`Update marks for ${s.name}:`, s.marks);
+        const newDept = prompt(`Update department for ${s.name}:`, s.dept);
+
+        if (newMarks !== null && newDept !== null) {
+            students[index].marks = parseInt(newMarks);
+            students[index].dept = newDept;
+            renderTable();
+            handleMessage("Record updated!", "success");
+        }
+    }
+
+    function deleteStudent(index) {
+        if (confirm("Are you sure you want to delete this record?")) {
+            students.splice(index, 1);
+            renderTable();
+            handleMessage("Record deleted successfully", "success");
+        }
+    }
+
+    function handleMessage(text, type) {
+        const box = document.getElementById('alertBox');
+        box.innerText = text;
+        box.className = type;
+        box.style.display = 'block';
+        setTimeout(() => box.style.display = 'none', 3000);
+    }
+
+    function clearForm() {
+        document.getElementById('stuId').value = '';
+        document.getElementById('stuName').value = '';
+        document.getElementById('stuDept').value = '';
+        document.getElementById('stuMarks').value = '';
+    }
+
+    window.onload = fetchStudents;
+</script>
+
+</body>
+</html>

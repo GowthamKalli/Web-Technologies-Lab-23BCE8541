@@ -1,0 +1,32 @@
+[
+    {
+        "name": "Kashmir Saffron",
+        "price": 350,
+        "category": "Spices"
+    },
+    {
+        "name": "Darjeeling Tea",
+        "price": 450,
+        "category": "Beverage"
+    },
+    {
+        "name": "Mysore Sandal Soap",
+        "price": 85,
+        "category": "Personal Care"
+    },
+    {
+        "name": "Basmati Rice",
+        "price": 120,
+        "category": "Grains"
+    },
+    {
+        "name": "Alphonso Mango",
+        "price": 600,
+        "category": "Fruits"
+    },
+    {
+        "name": "Filter Coffee",
+        "price": 250,
+        "category": "Beverage"
+    }
+]

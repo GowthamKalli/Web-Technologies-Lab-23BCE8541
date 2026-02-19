@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Employee Management System</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+        th { background-color: #f4f4f4; }
+        .form-group { margin-bottom: 10px; }
+        #message { padding: 10px; margin-top: 10px; display: none; }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+
+    <h2>Employee Management (XML AJAX)</h2>
+
+    <div id="message"></div>
+
+    <div class="form-group">
+        <input type="text" id="empId" placeholder="ID">
+        <input type="text" id="empName" placeholder="Name">
+        <input type="text" id="empDept" placeholder="Department">
+        <input type="number" id="empSalary" placeholder="Salary">
+        <button onclick="createEmployee()">Add Employee</button>
+    </div>
+
+    <table id="employeeTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Department</th>
+                <th>Salary</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+    </table>
+
+    
+
+    <script>
+        let xmlDoc = null;
+
+        // Initialize: Fetch XML
+        function loadXML() {
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", "employees.xml", true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        try {
+                            xmlDoc = xhr.responseXML;
+                            if (!xmlDoc || xmlDoc.getElementsByTagName("parsererror").length > 0) {
+                                throw new Error("Malformed XML structure.");
+                            }
+                            if (xmlDoc.getElementsByTagName("employee").length === 0) {
+                                showMessage("XML is empty.", "error");
+                            }
+                            renderTable();
+                        } catch (e) {
+                            showMessage("Error parsing XML: " + e.message, "error");
+                        }
+                    } else {
+                        showMessage("Failed to fetch XML file.", "error");
+                    }
+                }
+            };
+            xhr.send();
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById("tableBody");
+            tbody.innerHTML = "";
+            const employees = xmlDoc.getElementsByTagName("employee");
+
+            for (let i = 0; i < employees.length; i++) {
+                const id = employees[i].getElementsByTagName("id")[0].childNodes[0].nodeValue;
+                const name = employees[i].getElementsByTagName("name")[0].childNodes[0].nodeValue;
+                const dept = employees[i].getElementsByTagName("department")[0].childNodes[0].nodeValue;
+                const salary = employees[i].getElementsByTagName("salary")[0].childNodes[0].nodeValue;
+
+                const row = `<tr>
+                    <td>${id}</td>
+                    <td>${name}</td>
+                    <td><input type="text" id="dept-${id}" value="${dept}"></td>
+                    <td><input type="number" id="sal-${id}" value="${salary}"></td>
+                    <td>
+                        <button onclick="updateEmployee('${id}')">Update</button>
+                        <button onclick="deleteEmployee('${id}')">Delete</button>
+                    </td>
+                </tr>`;
+                tbody.innerHTML += row;
+            }
+        }
+
+        // Create
+        function createEmployee() {
+            const id = document.getElementById("empId").value;
+            const name = document.getElementById("empName").value;
+            const dept = document.getElementById("empDept").value;
+            const sal = document.getElementById("empSalary").value;
+
+            if (!id || !name || !dept || !sal) {
+                showMessage("All fields are required.", "error");
+                return;
+            }
+
+            const newEmp = xmlDoc.createElement("employee");
+            
+            const idNode = xmlDoc.createElement("id");
+            idNode.appendChild(xmlDoc.createTextNode(id));
+            newEmp.appendChild(idNode);
+
+            const nameNode = xmlDoc.createElement("name");
+            nameNode.appendChild(xmlDoc.createTextNode(name));
+            newEmp.appendChild(nameNode);
+
+            const deptNode = xmlDoc.createElement("department");
+            deptNode.appendChild(xmlDoc.createTextNode(dept));
+            newEmp.appendChild(deptNode);
+
+            const salNode = xmlDoc.createElement("salary");
+            salNode.appendChild(xmlDoc.createTextNode(sal));
+            newEmp.appendChild(salNode);
+
+            xmlDoc.documentElement.appendChild(newEmp);
+            renderTable();
+            showMessage("Employee added successfully!", "success");
+        }
+
+        // Update
+        function updateEmployee(id) {
+            const employees = xmlDoc.getElementsByTagName("employee");
+            const newDept = document.getElementById(`dept-${id}`).value;
+            const newSal = document.getElementById(`sal-${id}`).value;
+
+            for (let i = 0; i < employees.length; i++) {
+                if (employees[i].getElementsByTagName("id")[0].childNodes[0].nodeValue === id) {
+                    employees[i].getElementsByTagName("department")[0].childNodes[0].nodeValue = newDept;
+                    employees[i].getElementsByTagName("salary")[0].childNodes[0].nodeValue = newSal;
+                    showMessage("Record updated!", "success");
+                    renderTable();
+                    return;
+                }
+            }
+        }
+
+        // Delete
+        function deleteEmployee(id) {
+            const employees = xmlDoc.getElementsByTagName("employee");
+            for (let i = 0; i < employees.length; i++) {
+                if (employees[i].getElementsByTagName("id")[0].childNodes[0].nodeValue === id) {
+                    xmlDoc.documentElement.removeChild(employees[i]);
+                    showMessage("Employee removed.", "success");
+                    renderTable();
+                    return;
+                }
+            }
+        }
+
+        function showMessage(msg, type) {
+            const msgDiv = document.getElementById("message");
+            msgDiv.innerText = msg;
+            msgDiv.className = type;
+            msgDiv.style.display = "block";
+            setTimeout(() => { msgDiv.style.display = "none"; }, 3000);
+        }
+
+        window.onload = loadXML;
+    </script>
+</body>
+</html>

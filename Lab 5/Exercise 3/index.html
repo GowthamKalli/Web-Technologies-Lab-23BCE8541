@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chhatra Record System</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f4f7f6; padding: 40px; }
+        .box { max-width: 1000px; margin: auto; background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); }
+        h2 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+        .controls { display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap; }
+        input { padding: 10px; border: 1px solid #ddd; border-radius: 5px; flex: 1; min-width: 150px; }
+        button { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: 600; transition: 0.3s; }
+        .btn-add { background-color: #27ae60; color: white; }
+        .btn-update { background-color: #f39c12; color: white; }
+        .btn-delete { background-color: #e74c3c; color: white; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background-color: #3498db; color: white; }
+        .status-msg { padding: 10px; margin-bottom: 20px; border-radius: 5px; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h2>Prabandhan: Student Record System</h2>
+    
+    <div id="statusMsg" class="status-msg"></div>
+
+    <div class="controls">
+        <input type="text" id="sid" placeholder="Student ID (e.g. S104)">
+        <input type="text" id="sname" placeholder="Full Name">
+        <input type="text" id="scourse" placeholder="Course">
+        <input type="number" id="smarks" placeholder="Marks">
+        <button class="btn-add" onclick="addStudent()">Add Student</button>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Course</th>
+                <th>Marks</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="studentBody"></tbody>
+    </table>
+</div>
+
+<script>
+    let studentData = [];
+
+    async function loadStudents() {
+        try {
+            const response = await fetch('students.json');
+            if (!response.ok) throw new Error('Network response was not ok');
+            studentData = await response.json();
+            renderUI();
+        } catch (error) {
+            notify("Error loading JSON: " + error.message, "#e74c3c");
+        }
+    }
+
+    function renderUI() {
+        const tbody = document.getElementById("studentBody");
+        tbody.innerHTML = "";
+        
+        studentData.forEach((student, index) => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${student.id}</td>
+                <td>${student.name}</td>
+                <td><input type="text" value="${student.course}" id="edit-course-${index}"></td>
+                <td><input type="number" value="${student.marks}" id="edit-marks-${index}"></td>
+                <td>
+                    <button class="btn-update" onclick="updateStudent(${index})">Update</button>
+                    <button class="btn-delete" onclick="deleteStudent(${index})">Delete</button>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+
+    function addStudent() {
+        const id = document.getElementById("sid").value.trim();
+        const name = document.getElementById("sname").value.trim();
+        const course = document.getElementById("scourse").value.trim();
+        const marks = document.getElementById("smarks").value.trim();
+
+        if (!id || !name || !course || !marks) {
+            notify("Please fill all fields properly.", "#e74c3c");
+            return;
+        }
+
+        if (studentData.some(s => s.id === id)) {
+            notify("ID already exists.", "#e74c3c");
+            return;
+        }
+
+        const newStudent = { id, name, course, marks: parseInt(marks) };
+        studentData.push(newStudent);
+        
+        clearInputs();
+        renderUI();
+        notify("Student record added successfully!", "#27ae60");
+    }
+
+    function updateStudent(index) {
+        const newCourse = document.getElementById(`edit-course-${index}`).value.trim();
+        const newMarks = document.getElementById(`edit-marks-${index}`).value.trim();
+
+        if (!newCourse || !newMarks) {
+            notify("Update values cannot be empty.", "#e74c3c");
+            return;
+        }
+
+        studentData[index].course = newCourse;
+        studentData[index].marks = parseInt(newMarks);
+        
+        renderUI();
+        notify("Record updated!", "#f39c12");
+    }
+
+    function deleteStudent(index) {
+        studentData.splice(index, 1);
+        renderUI();
+        notify("Record deleted.", "#e74c3c");
+    }
+
+    function notify(text, color) {
+        const el = document.getElementById("statusMsg");
+        el.innerText = text;
+        el.style.backgroundColor = color;
+        el.style.color = "white";
+        el.style.display = "block";
+        setTimeout(() => el.style.display = "none", 3000);
+    }
+
+    function clearInputs() {
+        document.getElementById("sid").value = "";
+        document.getElementById("sname").value = "";
+        document.getElementById("scourse").value = "";
+        document.getElementById("smarks").value = "";
+    }
+
+    window.onload = loadStudents;
+</script>
+
+</body>
+</html>
