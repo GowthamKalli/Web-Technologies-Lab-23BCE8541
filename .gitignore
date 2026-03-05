@@ -1,3 +1,46 @@
 Lab 1/
 Lab 2/
 Lab 3/
+Lab 4/
+Lab 5/
+Lab 6/
+# Node.js / npm / yarn
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+package-lock.json    # ← optional: remove this line if you want to commit lockfile
+yarn.lock            # ← optional: same as above
+
+# Environment variables (very important!)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Build / dist folders (if you ever add frontend build step)
+dist/
+build/
+
+# Logs and temp files
+logs/
+*.log
+*.log.*
+.DS_Store            # MacOS junk
+Thumbs.db            # Windows junk
+
+# Editor / IDE files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# MongoDB / local data (if you ever export)
+*.dump
+mongod.conf
+
+# Temporary / OS files
+*.swp
+*~

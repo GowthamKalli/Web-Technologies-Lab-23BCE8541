@@ -1,0 +1,14 @@
+body { font-family: Arial, sans-serif; background: #f8f9fa; color: #333; margin:0; padding:20px; }
+.container { max-width: 1100px; margin: 0 auto; }
+h1 { text-align: center; color: #2c3e50; }
+.controls { display: flex; flex-wrap: wrap; gap: 15px; margin: 20px 0; justify-content: center; }
+input, select, button { padding: 10px; font-size: 16px; border-radius: 6px; border: 1px solid #ccc; }
+button { background: #3498db; color: white; border: none; cursor: pointer; }
+button:hover { background: #2980b9; }
+.results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+.book-card { background: white; border-radius: 8px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.book-card h3 { margin: 0 0 8px; color: #2c3e50; }
+.book-card p { margin: 6px 0; color: #555; }
+.rating { color: #e67e22; font-weight: bold; }
+.pagination { text-align: center; margin-top: 30px; font-size: 18px; }
+.pagination button { margin: 0 15px; padding: 10px 20px; }
