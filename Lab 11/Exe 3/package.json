@@ -1,0 +1,10 @@
+{
+  "name": "lab-11-exe-3-events",
+  "version": "1.0.0",
+  "description": "Exercise 3 - Node.js event-driven programming",
+  "main": "eventDemo.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node eventDemo.js"
+  }
+}

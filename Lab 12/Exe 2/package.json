@@ -1,0 +1,13 @@
+{
+  "name": "lab-12-exe-2-middleware",
+  "version": "1.0.0",
+  "description": "Exercise 2 - Express middleware demonstration",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}

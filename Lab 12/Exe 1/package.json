@@ -1,0 +1,13 @@
+{
+  "name": "lab-12-exe-1-rest-api",
+  "version": "1.0.0",
+  "description": "Exercise 1 - RESTful API using Express",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}

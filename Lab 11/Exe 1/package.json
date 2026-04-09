@@ -1,0 +1,10 @@
+{
+  "name": "lab-11-exe-1-node-server",
+  "version": "1.0.0",
+  "description": "Exercise 1 - Basic Node.js HTTP server",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js"
+  }
+}

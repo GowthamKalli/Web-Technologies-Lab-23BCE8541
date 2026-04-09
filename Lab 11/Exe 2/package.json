@@ -1,0 +1,10 @@
+{
+  "name": "lab-11-exe-2-file-operations",
+  "version": "1.0.0",
+  "description": "Exercise 2 - Node.js file operations",
+  "main": "fileOperations.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node fileOperations.js"
+  }
+}

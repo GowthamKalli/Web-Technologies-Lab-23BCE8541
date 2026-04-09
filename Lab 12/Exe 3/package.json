@@ -1,0 +1,14 @@
+{
+  "name": "lab-12-exe-3-mongodb-crud",
+  "version": "1.0.0",
+  "description": "Exercise 3 - Express and MongoDB CRUD using Mongoose",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "mongoose": "^8.14.1"
+  }
+}
